@@ -15,4 +15,5 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     // ✅ 특정 층의 방 조회
     List<Room> findByFloor(String floor);
+
 }

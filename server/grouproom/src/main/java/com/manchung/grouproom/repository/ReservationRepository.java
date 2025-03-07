@@ -7,6 +7,7 @@ import com.manchung.grouproom.entity.enums.ReservationState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,4 +25,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     // ✅ 특정 날짜 이후의 예약 조회
     List<Reservation> findByUseDateAfter(LocalDateTime date);
+
+    // ✅ use_date가 금주 일요일인 예약만 조회
+    List<Reservation> findByUseDate(LocalDate useDate);
 }

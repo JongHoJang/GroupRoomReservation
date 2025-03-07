@@ -46,6 +46,10 @@ dependencies {
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 
+	// ✅ Spring Security 추가 (비밀번호 암호화 지원)
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
+
 	// ✅ 테스트 관련 의존성
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
