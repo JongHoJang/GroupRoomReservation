@@ -25,9 +25,16 @@ dependencies {
 	// ✅ Spring Boot 기본 스타터
 	implementation("org.springframework.boot:spring-boot-starter")
 
+	// ✅ SpringDoc OpenAPI (Swagger UI) 의존성
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+
+	// ✅ AWS Cognito 관련 (사용 중이라면 필요)
+	implementation("com.amazonaws:aws-java-sdk-cognitoidp:1.12.496")
+
 	// ✅ Spring Cloud Function (AWS Lambda 지원)
 	implementation("org.springframework.cloud:spring-cloud-function-adapter-aws:3.2.4")
-	implementation("org.springframework.cloud:spring-cloud-starter-function-web")
+	implementation("org.springframework.cloud:spring-cloud-function-context:4.1.0")
+	implementation("org.springframework.cloud:spring-cloud-starter-function-web:4.1.0")
 
 	// ✅ Spring Data JPA (MySQL과 연동)
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
