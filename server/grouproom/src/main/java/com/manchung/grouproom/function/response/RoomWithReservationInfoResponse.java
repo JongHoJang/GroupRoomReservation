@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomWithReservationResponse {
+public class RoomWithReservationInfoResponse {
     private Integer roomId;
     private String name;
     private String floor;

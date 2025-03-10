@@ -31,4 +31,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     List<Reservation> findByUseDate(LocalDate useDate);
 
     Optional<Reservation> findByUserAndUseDate(User user, LocalDate useDate);
+
+    List<Reservation> findByUseDateAndState(LocalDate useDate, ReservationState state);
 }

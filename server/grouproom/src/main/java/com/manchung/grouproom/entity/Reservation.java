@@ -5,6 +5,7 @@ import com.manchung.grouproom.entity.enums.converter.ReservationStateConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,8 +25,8 @@ public class Reservation {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "use_date", nullable = true)
-    private LocalDateTime useDate;
+    @Column(name = "use_date", nullable = false)
+    private LocalDate useDate;
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
