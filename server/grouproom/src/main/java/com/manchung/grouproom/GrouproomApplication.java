@@ -1,9 +1,6 @@
 package com.manchung.grouproom;
 
-import com.manchung.grouproom.function.LoginFunction;
-import com.manchung.grouproom.function.RoomWithReservationFunction;
-import com.manchung.grouproom.function.SignUpFunction;
-import com.manchung.grouproom.function.UserUsageStatusFunction;
+import com.manchung.grouproom.function.*;
 import com.manchung.grouproom.function.request.LoginRequest;
 import com.manchung.grouproom.function.request.SignUpRequest;
 import com.manchung.grouproom.function.response.LoginResponse;
@@ -40,6 +37,11 @@ public class GrouproomApplication {
 
 	@Bean
 	public Function<Integer, UserUsageStatusResponse> userUsageStatusFunction(UserUsageStatusFunction function) {
+		return function::apply;
+	}
+
+	@Bean
+	public Function<Integer, Void> checkReservationAppliableFunction(CheckReservationAppliableFunction function) {
 		return function::apply;
 	}
 }
