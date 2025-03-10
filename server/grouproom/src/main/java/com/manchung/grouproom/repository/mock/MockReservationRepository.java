@@ -6,6 +6,7 @@ import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.entity.enums.ReservationState;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class MockReservationRepository {
         return reservations.stream().filter(res -> res.getReservationId().equals(reservationId)).findFirst();
     }
 
-    public void save(User user, Room room, LocalDateTime useDate) {
+    public void save(User user, Room room, LocalDate useDate) {
         Reservation reservation = Reservation.builder()
                 .reservationId(reservations.size() + 1)
                 .createdAt(LocalDateTime.now())
