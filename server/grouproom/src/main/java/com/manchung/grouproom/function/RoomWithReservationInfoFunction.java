@@ -2,6 +2,7 @@ package com.manchung.grouproom.function;
 
 import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.Room;
+import com.manchung.grouproom.entity.enums.AvailableStatus;
 import com.manchung.grouproom.function.response.RoomWithReservationInfoResponse;
 import com.manchung.grouproom.repository.ReservationRepository;
 import com.manchung.grouproom.repository.RoomRepository;
@@ -35,15 +36,17 @@ public class RoomWithReservationInfoFunction implements Function<Void, List<Room
         Map<Integer, Long> reservationCountMap = reservations.stream()
                 .collect(Collectors.groupingBy(res -> res.getRoom().getRoomId(), Collectors.counting()));
 
-        return rooms.stream().map(room -> new RoomWithReservationInfoResponse(
-                room.getRoomId(),
-                room.getName(),
-                room.getFloor(),
-                room.getPersonAffordableCount(),
-                room.getGroupAffordableCount(),
-                room.getAvailableStatus(),
-                room.getSittingType(),
-                reservationCountMap.getOrDefault(room.getRoomId(), 0L) // 예약이 없으면 0으로 설정
-        )).collect(Collectors.toList());
+        return rooms.stream()
+                .filter(room -> room.getAvailableStatus().equals(AvailableStatus.AVAILABLE))
+                .map(room -> new RoomWithReservationInfoResponse(
+                    room.getRoomId(),
+                    room.getName(),
+                    room.getFloor(),
+                    room.getPersonAffordableCount(),
+                    room.getGroupAffordableCount(),
+                    room.getAvailableStatus(),
+                    room.getSittingType(),
+                    reservationCountMap.getOrDefault(room.getRoomId(), 0L) // 예약이 없으면 0으로 설정
+                )).collect(Collectors.toList());
     }
 }
