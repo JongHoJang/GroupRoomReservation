@@ -3,10 +3,12 @@ package com.manchung.grouproom;
 import com.manchung.grouproom.function.LoginFunction;
 import com.manchung.grouproom.function.RoomWithReservationFunction;
 import com.manchung.grouproom.function.SignUpFunction;
+import com.manchung.grouproom.function.UserUsageStatusFunction;
 import com.manchung.grouproom.function.request.LoginRequest;
 import com.manchung.grouproom.function.request.SignUpRequest;
 import com.manchung.grouproom.function.response.LoginResponse;
 import com.manchung.grouproom.function.response.RoomWithReservationResponse;
+import com.manchung.grouproom.function.response.UserUsageStatusResponse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -34,5 +36,10 @@ public class GrouproomApplication {
 	@Bean
 	public Function<SignUpRequest, String> signUp(SignUpFunction signupFunction) {
 		return signupFunction::apply;
+	}
+
+	@Bean
+	public Function<Integer, UserUsageStatusResponse> userUsageStatusFunction(UserUsageStatusFunction function) {
+		return function::apply;
 	}
 }
