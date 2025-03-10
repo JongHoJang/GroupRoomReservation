@@ -36,6 +36,15 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-function-context:4.1.0")
 	implementation("org.springframework.cloud:spring-cloud-starter-function-web:4.1.0")
 
+	// ✅ AWS Lambda Java SDK 추가
+	implementation("com.amazonaws:aws-lambda-java-core:1.2.3")
+
+	// ✅ AWS Lambda 이벤트 관련 라이브러리 (선택 사항)
+	implementation("com.amazonaws:aws-lambda-java-events:3.11.0")
+
+	// ✅ (선택) AWS Lambda 로그 로깅
+	implementation("com.amazonaws:aws-lambda-java-log4j2:1.5.1")
+
 	// ✅ Spring Data JPA (MySQL과 연동)
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
