@@ -5,5 +5,5 @@ import org.springframework.cloud.function.adapter.aws.SpringBootRequestHandler;
 
 import java.util.List;
 
-public class RoomWithReservationHandler extends SpringBootRequestHandler<Void, List<RoomWithReservationInfoResponse>> {
-}
+//public class RoomWithReservationHandler extends SpringBootRequestHandler<Void, List<RoomWithReservationInfoResponse>> {
+//}
