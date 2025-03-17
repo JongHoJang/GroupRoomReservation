@@ -24,7 +24,7 @@ public class SignUpFunction implements Function<SignUpRequest, String> {
                 request.getName(), birthday, request.getChurchMemberId(), community
         ).orElseThrow(() -> new IllegalArgumentException("입력하신 정보가 올바르지 않습니다."));
 
-        user.setLoginId(request.getLoginId());
+        user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setIsSignedUp(true);
 

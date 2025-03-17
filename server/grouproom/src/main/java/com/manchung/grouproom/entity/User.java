@@ -36,8 +36,8 @@ public class User {
     @Column(name = "church_member_id", nullable = false)
     private Integer churchMemberId;
 
-    @Column(name = "login_id", length = 50, nullable = false, unique = true)
-    private String loginId;
+    @Column(name = "email", length = 50, nullable = false, unique = true)
+    private String email;
 
     @Column(name = "password", length = 100, nullable = false)
     private String password;

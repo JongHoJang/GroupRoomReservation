@@ -32,8 +32,8 @@ public class MockUserRepository {
         return users;
     }
 
-    public Optional<User> findByLoginId(String loginId) {
-        return users.stream().filter(user -> user.getLoginId().equals(loginId)).findFirst();
+    public Optional<User> findByEmail(String email) {
+        return users.stream().filter(user -> user.getEmail().equals(email)).findFirst();
     }
 
     public Optional<User> findById(Integer userId) {

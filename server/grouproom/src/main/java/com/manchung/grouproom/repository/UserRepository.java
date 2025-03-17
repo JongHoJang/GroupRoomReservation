@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    // ✅ loginId로 사용자 찾기
-    Optional<User> findByLoginId(String loginId);
+    // ✅ email로 사용자 찾기
+    Optional<User> findByEmail(String email);
 
     // ✅ 특정 Community에 속한 사용자 목록 조회
     List<User> findByCommunity(Community community);

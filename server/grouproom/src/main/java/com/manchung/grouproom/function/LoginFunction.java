@@ -32,7 +32,7 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
                     .withClientId(clientId)
                     .withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
                     .withAuthParameters(Map.of(
-                            "USERNAME", request.getLoginId(),
+                            "EMAIL", request.getEmail(),
                             "PASSWORD", request.getPassword()
                     ));
 
