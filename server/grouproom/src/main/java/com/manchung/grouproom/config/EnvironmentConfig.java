@@ -1,6 +1,6 @@
 package com.manchung.grouproom.config;
 
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;

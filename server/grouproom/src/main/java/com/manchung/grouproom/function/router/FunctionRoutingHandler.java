@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class FunctionRouter {
+public class FunctionRoutingHandler {
     private final FunctionCatalog functionCatalog;
 
     public Object routeFunction(Map<String, Object> request) {

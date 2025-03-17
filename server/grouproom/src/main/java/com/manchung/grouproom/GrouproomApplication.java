@@ -39,22 +39,22 @@ public class GrouproomApplication {
 	}
 
 	@Bean
-	public Function<Integer, UserUsageStatusResponse> userUsageStatusFunction(UserUsageStatusFunction function) {
+	public Function<Integer, UserUsageStatusResponse> getUserUsageStatus(UserUsageStatusFunction function) {
 		return function::apply;
 	}
 
 	@Bean
-	public Function<Integer, Void> checkReservationAppliableFunction(CheckReservationAppliableFunction function) {
+	public Function<Integer, Void> checkReservationApplicable(CheckReservationAppliableFunction function) {
 		return function::apply;
 	}
 
 	@Bean
-	public Function<RoomReservationRequest, RoomReservationResponse> roomReservationFunction(RoomReservationFunction function) {
+	public Function<RoomReservationRequest, RoomReservationResponse> reserveRoom(RoomReservationFunction function) {
 		return function::apply;
 	}
 
 	@Bean
-	public Supplier<String> reservationBatchFunction(ReservationSelectionFunction function) {
+	public Supplier<String> selectReservation(ReservationSelectionFunction function) {
 		return function::get;
 	}
 }

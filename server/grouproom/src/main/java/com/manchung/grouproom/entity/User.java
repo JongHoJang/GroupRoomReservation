@@ -4,7 +4,7 @@ import com.manchung.grouproom.entity.enums.Community;
 import com.manchung.grouproom.entity.enums.UserRole;
 import com.manchung.grouproom.entity.enums.converter.CommunityConverter;
 import com.manchung.grouproom.entity.enums.converter.UserRoleConverter;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;

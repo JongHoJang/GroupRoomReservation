@@ -4,7 +4,7 @@ import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.Room;
 import com.manchung.grouproom.entity.enums.ReservationState;
 import com.manchung.grouproom.repository.ReservationRepository;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.StepScope;

@@ -2,7 +2,7 @@ package com.manchung.grouproom.entity;
 
 import com.manchung.grouproom.entity.enums.ReservationState;
 import com.manchung.grouproom.entity.enums.converter.ReservationStateConverter;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;

@@ -1,8 +1,8 @@
 package com.manchung.grouproom.entity.enums.converter;
 
 import com.manchung.grouproom.entity.enums.ReservationState;
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 @Converter
 public class ReservationStateConverter implements AttributeConverter<ReservationState, Integer> {

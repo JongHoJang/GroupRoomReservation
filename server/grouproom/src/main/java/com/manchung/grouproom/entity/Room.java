@@ -4,7 +4,8 @@ import com.manchung.grouproom.entity.enums.AvailableStatus;
 import com.manchung.grouproom.entity.enums.SittingType;
 import com.manchung.grouproom.entity.enums.converter.AvailableStatusConverter;
 import com.manchung.grouproom.entity.enums.converter.SittingTypeConverter;
-import jakarta.persistence.*;
+
+import javax.persistence.*;
 import lombok.*;
 
 @Entity
