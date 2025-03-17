@@ -22,7 +22,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 
 	// ✅ SpringDoc OpenAPI (Swagger UI) 의존성
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+//	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 
 	// ✅ AWS Cognito 관련 (사용 중이라면 필요)
 	implementation("com.amazonaws:aws-java-sdk-cognitoidp:1.12.496")
