@@ -33,6 +33,9 @@ dependencies {
 	// ✅ JSON Web Token (JWT) 관련 라이브러리 (토큰 검증)
 	implementation("com.auth0:java-jwt:4.3.0")
 
+	// ✅ AWS Cognito Identity Provider SDK 추가
+	implementation("software.amazon.awssdk:cognitoidentityprovider:2.20.112")
+
 	// ✅ Spring Cloud Function (AWS Lambda 지원)
 	implementation("org.springframework.cloud:spring-cloud-function-adapter-aws:3.2.5")
 	implementation("org.springframework.cloud:spring-cloud-function-context:3.2.5")

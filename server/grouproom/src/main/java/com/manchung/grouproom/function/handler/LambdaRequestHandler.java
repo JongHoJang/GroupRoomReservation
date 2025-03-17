@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Component
 @AllArgsConstructor
-public class FunctionHandler implements RequestHandler<Map<String, Object>, Object> {
+public class LambdaRequestHandler implements RequestHandler<Map<String, Object>, Object> {
     private final FunctionRoutingHandler functionRouter;
 
     @Override

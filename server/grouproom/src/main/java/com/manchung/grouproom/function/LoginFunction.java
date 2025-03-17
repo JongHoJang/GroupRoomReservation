@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class LoginFunction implements Function<LoginRequest, LoginResponse> {
     private final AWSCognitoIdentityProvider cognitoClient;
 
-    @Value("${cognito.clientId}")
+    @Value("${aws.cognito.client-id}")
     private String clientId;
 
     @Autowired
