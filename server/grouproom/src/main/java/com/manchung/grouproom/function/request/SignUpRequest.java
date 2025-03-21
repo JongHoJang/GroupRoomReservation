@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SignUpUpdateRequest {
+public class SignUpRequest {
     private String name;
     private String birthday; // "YYYY-MM-DD" 형식
     private Integer churchMemberId;

@@ -3,6 +3,7 @@ package com.manchung.grouproom.function;
 import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.entity.enums.ReservationState;
+import com.manchung.grouproom.function.request.UserUsageStatusRequest;
 import com.manchung.grouproom.function.response.UserUsageStatusResponse;
 import com.manchung.grouproom.function.response.dto.UserUsageStatus;
 import com.manchung.grouproom.repository.ReservationRepository;
@@ -18,12 +19,12 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class UserUsageStatusFunction implements Function<Integer, UserUsageStatusResponse> {
+public class UserUsageStatusFunction implements Function<UserUsageStatusRequest, UserUsageStatusResponse> {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
 
     @Override
-    public UserUsageStatusResponse apply(Integer userId) {
+    public UserUsageStatusResponse apply(UserUsageStatusRequest request) {
         // ✅ 현재 시간 기준으로 마감 및 발표 시간 설정
         LocalDate today = LocalDate.now();
         LocalDate monday = today.with(DayOfWeek.MONDAY);
@@ -33,8 +34,9 @@ public class UserUsageStatusFunction implements Function<Integer, UserUsageStatu
         LocalDateTime announcementTime = monday.atTime(21, 5);
         LocalDateTime now = LocalDateTime.now();
 
+        UserUsageStatusRequest request1 = request;
         // ✅ 유저 조회
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(Integer.parseInt(request.getUserId()))
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
         // ✅ 금주 일요일 예약 여부 확인

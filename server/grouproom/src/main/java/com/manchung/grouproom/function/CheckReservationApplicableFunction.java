@@ -1,5 +1,8 @@
 package com.manchung.grouproom.function;
 
+import com.manchung.grouproom.function.request.CheckReservationApplicableRequest;
+import com.manchung.grouproom.function.request.UserUsageStatusRequest;
+import com.manchung.grouproom.function.response.CheckReservationApplicableResponse;
 import com.manchung.grouproom.function.response.UserUsageStatusResponse;
 import com.manchung.grouproom.function.response.dto.UserUsageStatus;
 import com.manchung.grouproom.repository.UserRepository;
@@ -14,12 +17,11 @@ import java.util.function.Function;
 
 @Component
 @AllArgsConstructor
-public class CheckReservationAppliableFunction implements Function<Integer, Void> {
-    private final UserRepository userRepository;
+public class CheckReservationApplicableFunction implements Function<CheckReservationApplicableRequest, CheckReservationApplicableResponse> {
     private final UserUsageStatusFunction userUsageStatusFunction;
 
     @Override
-    public Void apply(Integer userId) {
+    public CheckReservationApplicableResponse apply(CheckReservationApplicableRequest request) {
         // ✅ 현재 시간 가져오기
         LocalDateTime now = LocalDateTime.now();
 
@@ -39,13 +41,13 @@ public class CheckReservationAppliableFunction implements Function<Integer, Void
         }
 
         // ✅ 유저의 현재 신청 상태 가져오기
-        UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(userId);
+        UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(new UserUsageStatusRequest(request.getUserId()));
 
         // ✅ 미신청 상태인지 확인
         if (statusResponse.getStatus() != UserUsageStatus.NOT_APPLIED) {
             throw new IllegalStateException("이미 신청했거나 신청할 수 없는 상태입니다.");
         }
 
-        return null; // 200 OK 응답 (Spring Cloud Function에서는 Void 사용 가능)
+        return new CheckReservationApplicableResponse("신청 가능합니다"); // 200 OK 응답 (Spring Cloud Function에서는 Void 사용 가능)
     }
 }

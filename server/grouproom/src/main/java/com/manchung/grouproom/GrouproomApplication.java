@@ -1,13 +1,8 @@
 package com.manchung.grouproom;
 
 import com.manchung.grouproom.function.*;
-import com.manchung.grouproom.function.request.LoginRequest;
-import com.manchung.grouproom.function.request.RoomReservationRequest;
-import com.manchung.grouproom.function.request.SignUpUpdateRequest;
-import com.manchung.grouproom.function.response.LoginResponse;
-import com.manchung.grouproom.function.response.RoomReservationResponse;
-import com.manchung.grouproom.function.response.RoomWithReservationInfoResponse;
-import com.manchung.grouproom.function.response.UserUsageStatusResponse;
+import com.manchung.grouproom.function.request.*;
+import com.manchung.grouproom.function.response.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -29,22 +24,22 @@ public class GrouproomApplication {
 	}
 
 	@Bean
-	public Function<Void, List<RoomWithReservationInfoResponse>> getRoomWithReservationInfo(RoomWithReservationInfoFunction roomFunction) {
+	public Function<RoomWithReservationInfoRequest, List<RoomWithReservationInfoResponse>> getRoomWithReservationInfo(RoomWithReservationInfoFunction roomFunction) {
 		return roomFunction::apply;
 	}
 
 	@Bean
-	public Function<SignUpUpdateRequest, String> signUp(SignUpFunction signupFunction) {
+	public Function<SignUpRequest, SignUpResponse> signUp(SignUpFunction signupFunction) {
 		return signupFunction::apply;
 	}
 
 	@Bean
-	public Function<Integer, UserUsageStatusResponse> getUserUsageStatus(UserUsageStatusFunction function) {
+	public Function<UserUsageStatusRequest, UserUsageStatusResponse> getUserUsageStatus(UserUsageStatusFunction function) {
 		return function::apply;
 	}
 
 	@Bean
-	public Function<Integer, Void> checkReservationApplicable(CheckReservationAppliableFunction function) {
+	public Function<CheckReservationApplicableRequest, CheckReservationApplicableResponse> checkReservationApplicable(CheckReservationApplicableFunction function) {
 		return function::apply;
 	}
 

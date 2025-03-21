@@ -32,17 +32,11 @@ dependencies {
 	// ✅ SpringDoc OpenAPI (Swagger UI) 의존성
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
 
-	// ✅ AWS Cognito 관련 (사용 중이라면 필요)
-	implementation("com.amazonaws:aws-java-sdk-cognitoidp:1.12.496")
-
 	// ✅ Spring Boot 웹 애플리케이션 (REST API 포함)
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
 	// ✅ JSON Web Token (JWT) 관련 라이브러리 (토큰 검증)
 	implementation("com.auth0:java-jwt:4.3.0")
-
-	// ✅ AWS Cognito Identity Provider SDK 추가
-	implementation("software.amazon.awssdk:cognitoidentityprovider:2.20.112")
 
 	// ✅ Spring Cloud Function (AWS Lambda 지원)
 	implementation("org.springframework.cloud:spring-cloud-function-adapter-aws:3.2.5")
@@ -65,6 +59,8 @@ dependencies {
 	implementation("mysql:mysql-connector-java:8.0.33")
 
 	implementation("com.google.guava:guava:26.0-jre")
+
+	implementation("com.auth0:java-jwt:4.3.0")
 
 	// ✅ Lombok (코드 간소화)
 	compileOnly("org.projectlombok:lombok")

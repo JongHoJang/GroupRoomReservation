@@ -1,51 +1,54 @@
 package com.manchung.grouproom.function;
 
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
-import com.amazonaws.services.cognitoidp.model.AuthFlowType;
+import com.manchung.grouproom.Security.JwtProvider;
+import com.manchung.grouproom.entity.RefreshToken;
+import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.function.request.LoginRequest;
 import com.manchung.grouproom.function.response.LoginResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.manchung.grouproom.repository.RefreshTokenRepository;
+import com.manchung.grouproom.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 @Component
+@AllArgsConstructor
 public class LoginFunction implements Function<LoginRequest, LoginResponse> {
-    private final AWSCognitoIdentityProvider cognitoClient;
 
-    @Value("${aws.cognito.client-id}")
-    private String clientId;
-
-    @Autowired
-    public LoginFunction(AWSCognitoIdentityProvider cognitoClient) {
-        this.cognitoClient = cognitoClient;
-    }
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public LoginResponse apply(LoginRequest request) {
-        try {
-            AdminInitiateAuthRequest authRequest = new AdminInitiateAuthRequest()
-                    .withClientId(clientId)
-                    .withAuthFlow(AuthFlowType.ADMIN_NO_SRP_AUTH)
-                    .withAuthParameters(Map.of(
-                            "EMAIL", request.getEmail(),
-                            "PASSWORD", request.getPassword()
-                    ));
+        // 1️⃣ 사용자 조회
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 없습니다."));
 
-            AdminInitiateAuthResult authResult = cognitoClient.adminInitiateAuth(authRequest);
-
-            return new LoginResponse(
-                    authResult.getAuthenticationResult().getAccessToken(),
-                    authResult.getAuthenticationResult().getRefreshToken(),
-                    authResult.getAuthenticationResult().getIdToken()
-            );
-
-        } catch (Exception e) {
-            return new LoginResponse(null, null, "Login failed: " + e.getMessage());
+        // 2️⃣ 비밀번호 검증
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        // 3️⃣ AccessToken / RefreshToken 발급
+        String accessToken = jwtProvider.createAccessToken(user.getUserId());
+        String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
+
+        // 4️⃣ RefreshToken 저장
+        RefreshToken tokenEntity = RefreshToken.builder()
+                .user(user)
+                .token(refreshToken)
+                .createdAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusDays(14))
+                .build();
+
+        refreshTokenRepository.save(tokenEntity);
+
+        // 5️⃣ 응답
+        return new LoginResponse(accessToken, refreshToken);
     }
 }

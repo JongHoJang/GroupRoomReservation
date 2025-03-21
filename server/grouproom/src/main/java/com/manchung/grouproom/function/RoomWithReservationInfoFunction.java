@@ -3,6 +3,7 @@ package com.manchung.grouproom.function;
 import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.Room;
 import com.manchung.grouproom.entity.enums.AvailableStatus;
+import com.manchung.grouproom.function.request.RoomWithReservationInfoRequest;
 import com.manchung.grouproom.function.response.RoomWithReservationInfoResponse;
 import com.manchung.grouproom.repository.ReservationRepository;
 import com.manchung.grouproom.repository.RoomRepository;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class RoomWithReservationInfoFunction implements Function<Void, List<RoomWithReservationInfoResponse>> {
+public class RoomWithReservationInfoFunction implements Function<RoomWithReservationInfoRequest, List<RoomWithReservationInfoResponse>> {
 
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
 
     @Override
-    public List<RoomWithReservationInfoResponse> apply(Void unused) {
+    public List<RoomWithReservationInfoResponse> apply(RoomWithReservationInfoRequest request) {
 
         LocalDate today = LocalDate.now();
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);
