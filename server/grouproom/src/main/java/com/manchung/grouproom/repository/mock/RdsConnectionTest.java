@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class RdsConnectionTest {
     public static void main(String[] args) {
-        String jdbcUrl = "jdbc:mysql://manchung-grouproom-rds.crogq0mcg5m6.ap-northeast-2.rds.amazonaws.com:3306";
+        String jdbcUrl = "jdbc:mysql://manchung-grouproom-rds.crogq0mcg5m6.ap-northeast-2.rds.amazonaws.com:3306/grouproom_dev";
         String username = "admin";
         String password = "114802gud";
 

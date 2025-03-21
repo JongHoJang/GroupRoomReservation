@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
 	java
 	id("org.springframework.boot") version "2.7.18"
 	id("io.spring.dependency-management") version "1.1.4"
+	id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.manchung"
@@ -13,16 +16,21 @@ java {
 	}
 }
 
+
 repositories {
 	mavenCentral()
+	jcenter()
 }
 
 dependencies {
 	// ✅ Spring Boot 기본 스타터
 	implementation("org.springframework.boot:spring-boot-starter")
 
+	// ✅ 암호화
+	implementation("org.springframework.boot:spring-boot-starter-security")
+
 	// ✅ SpringDoc OpenAPI (Swagger UI) 의존성
-//	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+	implementation("org.springdoc:springdoc-openapi-ui:1.6.14")
 
 	// ✅ AWS Cognito 관련 (사용 중이라면 필요)
 	implementation("com.amazonaws:aws-java-sdk-cognitoidp:1.12.496")
@@ -56,6 +64,8 @@ dependencies {
 	// ✅ MySQL 드라이버 (로컬 및 AWS RDS 연동)
 	implementation("mysql:mysql-connector-java:8.0.33")
 
+	implementation("com.google.guava:guava:26.0-jre")
+
 	// ✅ Lombok (코드 간소화)
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -71,3 +81,20 @@ dependencies {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks {
+	named<ShadowJar>("shadowJar") {
+		archiveBaseName.set("shadow")
+		mergeServiceFiles()
+		manifest {
+			attributes(mapOf("Main-Class" to "com.manchung.grouproom.GrouproomApplication"))
+		}
+	}
+}
+
+tasks {
+	build {
+		dependsOn(shadowJar)
+	}
+}
+

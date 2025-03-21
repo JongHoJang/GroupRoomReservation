@@ -3,7 +3,7 @@ package com.manchung.grouproom;
 import com.manchung.grouproom.function.*;
 import com.manchung.grouproom.function.request.LoginRequest;
 import com.manchung.grouproom.function.request.RoomReservationRequest;
-import com.manchung.grouproom.function.request.SignUpRequest;
+import com.manchung.grouproom.function.request.SignUpUpdateRequest;
 import com.manchung.grouproom.function.response.LoginResponse;
 import com.manchung.grouproom.function.response.RoomReservationResponse;
 import com.manchung.grouproom.function.response.RoomWithReservationInfoResponse;
@@ -34,7 +34,7 @@ public class GrouproomApplication {
 	}
 
 	@Bean
-	public Function<SignUpRequest, String> signUp(SignUpFunction signupFunction) {
+	public Function<SignUpUpdateRequest, String> signUp(SignUpFunction signupFunction) {
 		return signupFunction::apply;
 	}
 
