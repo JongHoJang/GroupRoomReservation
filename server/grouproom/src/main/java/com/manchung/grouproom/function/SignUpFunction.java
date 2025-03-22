@@ -2,6 +2,8 @@ package com.manchung.grouproom.function;
 
 import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.entity.enums.Community;
+import com.manchung.grouproom.error.CustomException;
+import com.manchung.grouproom.error.ErrorCode;
 import com.manchung.grouproom.function.request.SignUpRequest;
 import com.manchung.grouproom.function.response.SignUpResponse;
 import com.manchung.grouproom.repository.UserRepository;
@@ -26,7 +28,7 @@ public class SignUpFunction implements Function<SignUpRequest, SignUpResponse> {
 
         User user = userRepository.findByNameAndBirthdayAndChurchMemberIdAndCommunity(
                 request.getName(), birthday, request.getChurchMemberId(), community
-        ).orElseThrow(() -> new IllegalArgumentException("입력하신 정보가 올바르지 않습니다."));
+        ).orElseThrow(() -> new CustomException(ErrorCode.SIGNUP_WRONG_INFORMATION));
 
         // 2️⃣ 비밀번호 암호화
         String encryptedPassword = passwordEncoder.encode(request.getPassword());

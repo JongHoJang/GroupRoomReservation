@@ -58,7 +58,7 @@ public class RoomReservationFunction implements Function<RoomReservationRequest,
                 .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다."));
 
         // ✅ 유저의 현재 신청 상태 가져오기
-        UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(new UserUsageStatusRequest(String.valueOf(user.getUserId())));
+        UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(user.getUserId());
 
         // ✅ 유저가 미신청 상태인지 확인
         if (statusResponse.getStatus() != UserUsageStatus.NOT_APPLIED) {

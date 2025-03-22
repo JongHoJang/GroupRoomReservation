@@ -15,17 +15,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class RoomWithReservationInfoFunction implements Function<RoomWithReservationInfoRequest, List<RoomWithReservationInfoResponse>> {
+public class RoomWithReservationInfoFunction implements Supplier<List<RoomWithReservationInfoResponse>> {
 
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
 
     @Override
-    public List<RoomWithReservationInfoResponse> apply(RoomWithReservationInfoRequest request) {
+    public List<RoomWithReservationInfoResponse> get() {
 
         LocalDate today = LocalDate.now();
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);

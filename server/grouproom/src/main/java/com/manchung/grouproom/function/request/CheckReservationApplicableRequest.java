@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CheckReservationApplicableRequest {
-    private String userId;
+    private Integer userId;
 }

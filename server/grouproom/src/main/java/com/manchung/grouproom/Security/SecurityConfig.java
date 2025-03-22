@@ -4,6 +4,7 @@ import com.manchung.grouproom.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,16 +30,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 사용 안 함
-            .and()
-            .authorizeRequests()
-            .antMatchers("/login", "/signUp").permitAll() // 회원가입과 로그인은 인증 없이 허용
-            .anyRequest().authenticated() // 나머지는 JWT 인증 필요
-            .and()
-            .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService),
-                        UsernamePasswordAuthenticationFilter.class)
-            .build();
+                //.cors().and() // ✅ CORS 설정 추가
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/login", "/api/signUp").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/selectReservation").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean

@@ -2,7 +2,8 @@ package com.manchung.grouproom.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.manchung.grouproom.Security.JwtProvider;
-import com.manchung.grouproom.entity.User;
+import com.manchung.grouproom.error.CustomException;
+import com.manchung.grouproom.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,7 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         String token = resolveToken(request);
-        if (token != null && jwtProvider.validateToken(token)) {
+        if (token != null) {
+            if (!jwtProvider.validateToken(token)) {
+                throw new CustomException(ErrorCode.ACCESS_TOKEN_EXPIRED);
+            }
             setAuthentication(token, request);
         }
         chain.doFilter(request, response);

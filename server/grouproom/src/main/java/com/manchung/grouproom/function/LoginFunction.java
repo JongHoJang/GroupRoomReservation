@@ -3,6 +3,8 @@ package com.manchung.grouproom.function;
 import com.manchung.grouproom.Security.JwtProvider;
 import com.manchung.grouproom.entity.RefreshToken;
 import com.manchung.grouproom.entity.User;
+import com.manchung.grouproom.error.CustomException;
+import com.manchung.grouproom.error.ErrorCode;
 import com.manchung.grouproom.function.request.LoginRequest;
 import com.manchung.grouproom.function.response.LoginResponse;
 import com.manchung.grouproom.repository.RefreshTokenRepository;
@@ -27,11 +29,11 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
     public LoginResponse apply(LoginRequest request) {
         // 1️⃣ 사용자 조회
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 사용자가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_EMAIL));
 
         // 2️⃣ 비밀번호 검증
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
         // 3️⃣ AccessToken / RefreshToken 발급

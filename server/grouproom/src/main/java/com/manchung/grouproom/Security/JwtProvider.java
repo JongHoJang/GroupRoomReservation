@@ -50,8 +50,9 @@ public class JwtProvider {
     public boolean validateToken(String token) {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
-            verifier.verify(token);
-            return true;
+            DecodedJWT jwt = verifier.verify(token);
+
+            return jwt.getExpiresAt().after(new Date());
         } catch (JWTVerificationException e) {
             return false;
         }
