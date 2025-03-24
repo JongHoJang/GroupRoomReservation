@@ -12,6 +12,7 @@ import com.manchung.grouproom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.function.Function;
 
 @Component
@@ -20,6 +21,7 @@ public class GetAccessTokenFromRefreshTokenFunction implements Function<RefreshT
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Transactional
     @Override
     public RefreshTokenResponse apply(RefreshTokenRequest refreshTokenRequest) {
         if (!jwtProvider.validateToken(refreshTokenRequest.getRefreshToken())) {

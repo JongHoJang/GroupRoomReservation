@@ -4,6 +4,8 @@ import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.Room;
 import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.entity.enums.ReservationState;
+import com.manchung.grouproom.error.CustomException;
+import com.manchung.grouproom.error.ErrorCode;
 import com.manchung.grouproom.function.request.RoomReservationRequest;
 import com.manchung.grouproom.function.request.UserUsageStatusRequest;
 import com.manchung.grouproom.function.response.RoomReservationResponse;
@@ -15,6 +17,7 @@ import com.manchung.grouproom.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +32,7 @@ public class RoomReservationFunction implements Function<RoomReservationRequest,
     private final ReservationRepository reservationRepository;
     private final UserUsageStatusFunction userUsageStatusFunction;
 
+    @Transactional
     @Override
     public RoomReservationResponse apply(RoomReservationRequest request) {
         // ✅ 현재 시간 가져오기
@@ -36,7 +40,7 @@ public class RoomReservationFunction implements Function<RoomReservationRequest,
 
         // ✅ 현재 요일이 월요일인지 확인
         if (now.getDayOfWeek() != DayOfWeek.MONDAY) {
-            throw new IllegalStateException("신청은 월요일에만 가능합니다.");
+            throw new CustomException(ErrorCode.RESERVATION_ONLY_ALLOWED_MONDAY);
         }
 
         // ✅ 신청 가능 시간 (월요일 00:00 ~ 21:00)
@@ -46,23 +50,23 @@ public class RoomReservationFunction implements Function<RoomReservationRequest,
 
         // ✅ 현재 시간이 신청 가능 시간 내에 있는지 확인
         if (now.isBefore(applicationStart) || now.isAfter(applicationDeadline)) {
-            throw new IllegalStateException("신청 가능 시간이 아닙니다. (월요일 00:00~21:00)");
+            throw new CustomException(ErrorCode.RESERVATION_NOT_ALLOWED_TIME);
         }
 
         // ✅ 유저 조회
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // ✅ 소그룹실 조회
         Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROOM_NOT_FOUND));
 
         // ✅ 유저의 현재 신청 상태 가져오기
         UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(user.getUserId());
 
-        // ✅ 유저가 미신청 상태인지 확인
-        if (statusResponse.getStatus() != UserUsageStatus.NOT_APPLIED) {
-            throw new IllegalStateException("이미 신청했거나 신청할 수 없는 상태입니다.");
+        // ✅ 유저가 신청 전 상태인지 확인
+        if (statusResponse.getStatus() != UserUsageStatus.BEFORE_APPLICATION) {
+            throw new CustomException(ErrorCode.RESERVATION_NOT_ALLOWED_STATUS);
         }
 
         // ✅ 예약 생성 (기본적으로 PENDING 상태)

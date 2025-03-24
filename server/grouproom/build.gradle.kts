@@ -72,6 +72,9 @@ dependencies {
 
 	// ✅ 테스트 관련 의존성
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	// ✅ 테스트용 메모리 DB (H2)
+	testImplementation("com.h2database:h2")
 }
 
 tasks.withType<Test> {

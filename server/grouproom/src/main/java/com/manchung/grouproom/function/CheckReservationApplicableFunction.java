@@ -46,7 +46,7 @@ public class CheckReservationApplicableFunction implements Function<Integer, Che
         UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(userId);
 
         // ✅ 미신청 상태인지 확인
-        if (statusResponse.getStatus() != UserUsageStatus.NOT_APPLIED) {
+        if (statusResponse.getStatus() != UserUsageStatus.BEFORE_APPLICATION) {
             throw new CustomException(ErrorCode.RESERVATION_NOT_ALLOWED_STATUS);
         }
 

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.function.Function;
 
@@ -20,6 +21,7 @@ public class SignUpFunction implements Function<SignUpRequest, SignUpResponse> {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override
     public SignUpResponse apply(SignUpRequest request) {
         // 1️⃣ 사용자 정보 확인 (기존 DB에서 사용자 존재 여부 체크)

@@ -23,9 +23,9 @@ public enum ErrorCode {
     ROOM_NOT_FOUND(30001, HttpStatus.NOT_FOUND, "해당 룸을 찾을 수 없습니다."),
     ROOM_ALREADY_RESERVED(30002, HttpStatus.CONFLICT, "이미 예약된 룸입니다."),
     RESERVATION_NOT_ALLOWED(30003, HttpStatus.FORBIDDEN, "예약할 수 없는 사용자입니다."),
-    RESERVATION_ONLY_ALLOWED_MONDAY(30003, HttpStatus.FORBIDDEN, "신청은 월요일에만 가능합니다."),
-    RESERVATION_NOT_ALLOWED_TIME(30003, HttpStatus.FORBIDDEN, "신청 가능 시간이 아닙니다. (월요일 00:00~21:00)"),
-    RESERVATION_NOT_ALLOWED_STATUS(30003, HttpStatus.FORBIDDEN, "이미 신청했거나 신청할 수 없는 상태입니다."),
+    RESERVATION_ONLY_ALLOWED_MONDAY(30004, HttpStatus.FORBIDDEN, "신청은 월요일에만 가능합니다."),
+    RESERVATION_NOT_ALLOWED_TIME(30005, HttpStatus.FORBIDDEN, "신청 가능 시간이 아닙니다. (월요일 00:00~21:00)"),
+    RESERVATION_NOT_ALLOWED_STATUS(30006, HttpStatus.FORBIDDEN, "이미 신청했거나 신청할 수 없는 상태입니다."),
 
     // ✅ 서버 내부 오류
     INTERNAL_SERVER_ERROR(99999, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생");

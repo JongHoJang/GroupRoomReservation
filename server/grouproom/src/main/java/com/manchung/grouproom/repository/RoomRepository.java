@@ -10,10 +10,4 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
 
-    // ✅ 사용 가능한 방 조회
-    List<Room> findByAvailableStatus(AvailableStatus availableStatus);
-
-    // ✅ 특정 층의 방 조회
-    List<Room> findByFloor(String floor);
-
 }

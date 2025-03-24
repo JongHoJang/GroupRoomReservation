@@ -15,18 +15,6 @@ import java.util.Optional;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 
-    // ✅ 특정 사용자의 예약 조회
-    List<Reservation> findByUser(User user);
-
-    // ✅ 특정 방(Room)의 예약 조회
-    List<Reservation> findByRoom(Room room);
-
-    // ✅ 특정 예약 상태(State)로 조회
-    List<Reservation> findByState(ReservationState state);
-
-    // ✅ 특정 날짜 이후의 예약 조회
-    List<Reservation> findByUseDateAfter(LocalDateTime date);
-
     // ✅ use_date가 금주 일요일인 예약만 조회
     List<Reservation> findByUseDate(LocalDate useDate);
 

@@ -13,7 +13,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -25,6 +27,7 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override
     public LoginResponse apply(LoginRequest request) {
         // 1️⃣ 사용자 조회
@@ -40,15 +43,25 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
         String accessToken = jwtProvider.createAccessToken(user.getUserId());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
 
-        // 4️⃣ RefreshToken 저장
-        RefreshToken tokenEntity = RefreshToken.builder()
-                .user(user)
-                .token(refreshToken)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusDays(14))
-                .build();
+        // 4️⃣ RefreshToken 저장 or 업데이트
+        Optional<RefreshToken> existing = refreshTokenRepository.findByUser(user);
+        if (existing.isPresent()) {
+            RefreshToken existingToken = existing.get();
+            existingToken.setToken(refreshToken);
+            existingToken.setCreatedAt(LocalDateTime.now());
+            existingToken.setExpiresAt(LocalDateTime.now().plusDays(14));
+            refreshTokenRepository.save(existingToken);
+        } else {
+            RefreshToken tokenEntity = RefreshToken.builder()
+                    .user(user)
+                    .token(refreshToken)
+                    .createdAt(LocalDateTime.now())
+                    .expiresAt(LocalDateTime.now().plusDays(14))
+                    .build();
 
-        refreshTokenRepository.save(tokenEntity);
+            refreshTokenRepository.save(tokenEntity);
+        }
+
 
         // 5️⃣ 응답
         return new LoginResponse(accessToken, refreshToken);

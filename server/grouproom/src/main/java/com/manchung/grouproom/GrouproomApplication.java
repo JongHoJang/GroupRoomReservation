@@ -1,21 +1,30 @@
 package com.manchung.grouproom;
 
-import com.manchung.grouproom.function.*;
-import com.manchung.grouproom.function.request.*;
-import com.manchung.grouproom.function.response.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import javax.annotation.PostConstruct;
 
+@Slf4j
 @SpringBootApplication
 public class GrouproomApplication {
 
+	@Value("${spring.datasource.url}")
+	private String dbUrl;
+
+	@Value("${jwt.secret}")
+	private String jwtSecret;
+
 	public static void main(String[] args) {
 		SpringApplication.run(GrouproomApplication.class, args);
+	}
+
+	@PostConstruct
+	public void logs() {
+		log.info(">> DB URL: {}", dbUrl);
+		log.info(">> JWT_SECRET: {}", jwtSecret);
 	}
 
 //	@Bean
