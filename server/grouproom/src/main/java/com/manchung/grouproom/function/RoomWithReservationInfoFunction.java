@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class RoomWithReservationInfoFunction implements Supplier<List<RoomWithReservationInfoResponse>> {
+public class RoomWithReservationInfoFunction implements Function<Integer, List<RoomWithReservationInfoResponse>> {
 
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
 
     @Override
-    public List<RoomWithReservationInfoResponse> get() {
+    public List<RoomWithReservationInfoResponse> apply(Integer userId) {
 
         LocalDate today = LocalDate.now();
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);

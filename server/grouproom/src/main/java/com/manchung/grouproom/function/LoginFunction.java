@@ -62,8 +62,7 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
             refreshTokenRepository.save(tokenEntity);
         }
 
-
         // 5️⃣ 응답
-        return new LoginResponse(accessToken, refreshToken);
+        return new LoginResponse(user.getUserId(), accessToken, refreshToken);
     }
 }

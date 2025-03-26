@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.manchung.grouproom.constant.HeaderConstant.USER_ID;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -29,7 +31,9 @@ public class GroupRoomController {
             description = "리프레시 토큰을 이용하여 액세스 토큰을 조회합니다"
     )
     @PostMapping("/refresh-token")
-    public RefreshTokenResponse refreshAccessToken(@RequestBody RefreshTokenRequest request) {
+    public RefreshTokenResponse refreshAccessToken(
+            @RequestHeader(USER_ID) Integer userId,
+            @RequestBody RefreshTokenRequest request) {
         return getAccessTokenFromRefreshTokenFunction.apply(request);
     }
 
@@ -57,7 +61,7 @@ public class GroupRoomController {
     )
     @PostMapping("/reserveRoom")
     public RoomReservationResponse reserve(
-            @RequestParam Integer userId,
+            @RequestHeader(USER_ID) Integer userId,
             @RequestParam Integer roomId) {
         return reserveRoomFunction.apply(new RoomReservationRequest(userId, roomId));
     }
@@ -68,7 +72,7 @@ public class GroupRoomController {
     )
     @GetMapping("/checkReservationApplicable")
     public CheckReservationApplicableResponse checkReservation(
-            @RequestParam Integer userId) {
+            @RequestHeader(USER_ID) Integer userId) {
         return checkReservationAppliableFunction.apply(userId);
     }
 
@@ -77,8 +81,9 @@ public class GroupRoomController {
             description = "모든 방에 대한 모든 예약 정보를 가져옵니다."
     )
     @GetMapping("/getRoomWithReservationInfo")
-    public List<RoomWithReservationInfoResponse> getRoomInfo() {
-        return getRoomWithReservationInfoFunction.get();
+    public List<RoomWithReservationInfoResponse> getRoomInfo(
+            @RequestHeader(USER_ID) Integer userId) {
+        return getRoomWithReservationInfoFunction.apply(userId);
     }
 
     @Operation(
@@ -87,7 +92,7 @@ public class GroupRoomController {
     )
     @GetMapping("/getUserUsageStatus")
     public UserUsageStatusResponse usageStatus(
-            @RequestParam Integer userId
+            @RequestHeader(USER_ID) Integer userId
     ) {
         return userUsageStatusFunction.apply(userId);
     }
