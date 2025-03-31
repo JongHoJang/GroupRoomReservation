@@ -26,39 +26,4 @@ public class GrouproomApplication {
 		log.info(">> DB URL: {}", dbUrl);
 		log.info(">> JWT_SECRET: {}", jwtSecret);
 	}
-
-//	@Bean
-//	public Function<LoginRequest, LoginResponse> login(LoginFunction loginFunction) {
-//		return loginFunction::apply;
-//	}
-//
-//	@Bean
-//	public Function<RoomWithReservationInfoRequest, List<RoomWithReservationInfoResponse>> getRoomWithReservationInfo(RoomWithReservationInfoFunction roomFunction) {
-//		return roomFunction::apply;
-//	}
-//
-//	@Bean
-//	public Function<SignUpRequest, SignUpResponse> signUp(SignUpFunction signupFunction) {
-//		return signupFunction::apply;
-//	}
-//
-//	@Bean
-//	public Function<UserUsageStatusRequest, UserUsageStatusResponse> getUserUsageStatus(UserUsageStatusFunction function) {
-//		return function::apply;
-//	}
-//
-//	@Bean
-//	public Function<CheckReservationApplicableRequest, CheckReservationApplicableResponse> checkReservationApplicable(CheckReservationApplicableFunction function) {
-//		return function::apply;
-//	}
-//
-//	@Bean
-//	public Function<RoomReservationRequest, RoomReservationResponse> reserveRoom(RoomReservationFunction function) {
-//		return function::apply;
-//	}
-//
-//	@Bean
-//	public Supplier<String> selectReservation(ReservationSelectionFunction function) {
-//		return function::get;
-//	}
 }

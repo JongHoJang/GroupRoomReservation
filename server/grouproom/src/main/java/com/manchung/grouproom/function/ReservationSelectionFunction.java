@@ -1,6 +1,5 @@
 package com.manchung.grouproom.function;
 
-import com.manchung.grouproom.batch.ReservationSelectionTasklet;
 import com.manchung.grouproom.entity.Reservation;
 import com.manchung.grouproom.entity.Room;
 import com.manchung.grouproom.entity.enums.ReservationState;
