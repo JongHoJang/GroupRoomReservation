@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -32,17 +30,31 @@ public class ReservationSelectionFunction implements Supplier<String> {
 
         Random random = new Random();
         reservationsByRoom.forEach((room, roomReservations) -> {
-            if (!roomReservations.isEmpty()) {
-                Reservation winner = roomReservations.get(random.nextInt(roomReservations.size()));
-                winner.setState(ReservationState.SUCCESS);
-                reservationRepository.save(winner);
+            int maxWinners = room.getGroupAffordableCount();
 
-                roomReservations.stream()
-                        .filter(reservation -> !reservation.equals(winner))
-                        .forEach(loser -> {
-                            loser.setState(ReservationState.FAILED);
-                            reservationRepository.save(loser);
-                        });
+            if (roomReservations.size() <= maxWinners) {
+                // 전원 당첨
+                roomReservations.forEach(reservation -> {
+                    reservation.setState(ReservationState.SUCCESS);
+                    reservationRepository.save(reservation);
+                });
+            } else {
+                // 랜덤으로 maxWinners 명만 당첨
+                List<Reservation> shuffled = new ArrayList<>(roomReservations);
+                Collections.shuffle(shuffled, random);
+
+                List<Reservation> winners = shuffled.subList(0, maxWinners);
+                List<Reservation> losers = shuffled.subList(maxWinners, shuffled.size());
+
+                winners.forEach(winner -> {
+                    winner.setState(ReservationState.SUCCESS);
+                    reservationRepository.save(winner);
+                });
+
+                losers.forEach(loser -> {
+                    loser.setState(ReservationState.FAILED);
+                    reservationRepository.save(loser);
+                });
             }
         });
         return "추첨이 성공했습니다";

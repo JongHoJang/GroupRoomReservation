@@ -89,6 +89,14 @@ public class UserController {
             description =
             """
             사용자의 이용 상태를 조회합니다\n
+            
+            status 값에 따라 화면에 나타낼 컨텐츠가 달라짐\n
+            NOT_APPLIED : 신청기간 지났는데 신청 안한 경우\n
+            BEFORE_APPLICATION : 신청 가능한데 아직 신청 안한 경우\n
+            AFTER_APPLICATION : 신청기간 내 신청 완료한 경우 \n
+            WINNER : 당첨된 경우\n
+            LOSER : 당첨되지 못한 경우\n
+            
             에러코드\n
             code : 20001 -> 사용자를 찾을 수 없습니다\n
             """
