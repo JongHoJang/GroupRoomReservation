@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserUsageStatusResponse {
+    private String userName;
     private LocalDateTime applicationDeadline; // 신청 마감 시간
     private LocalDateTime announcementTime;    // 발표 시간
     private LocalDate useDate;                 // 소그룹실 사용일 (금주 일요일)

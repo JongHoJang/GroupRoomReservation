@@ -40,6 +40,7 @@ public class UserUsageStatusFunction implements Function<Integer, UserUsageStatu
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        String userName = user.getName();
         // ✅ 금주 일요일 예약 여부 확인
         Optional<Reservation> reservationOpt = reservationRepository.findByUserAndUseDate(user, sunday);
         String roomName = reservationOpt.map(res -> res.getRoom().getName()).orElse(null);
@@ -47,7 +48,7 @@ public class UserUsageStatusFunction implements Function<Integer, UserUsageStatu
         // ✅ 현재 상태 판단
         UserUsageStatus status = determineUserUsageStatus(now, applicationDeadline, announcementTime, reservationOpt);
 
-        return new UserUsageStatusResponse(applicationDeadline, announcementTime, sunday, status, roomName);
+        return new UserUsageStatusResponse(userName, applicationDeadline, announcementTime, sunday, status, roomName);
 
     }
 
