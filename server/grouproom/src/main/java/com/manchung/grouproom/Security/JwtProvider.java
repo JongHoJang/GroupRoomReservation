@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -26,7 +27,6 @@ public class JwtProvider {
     private long refreshTokenExpirationMs;
 
     private static final String CLAIM_USER_ID = "userId";
-    public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
 
     public String createAccessToken(Integer userId) {
@@ -66,10 +66,9 @@ public class JwtProvider {
     }
 
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.split(" ")[1].trim();
-        }
-        return null;
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
+                ? bearerToken.substring(7)
+                : null;
     }
 }

@@ -31,7 +31,7 @@ public class UserController {
             code : 10004 -> Refresh Token이 만료되었습니다.\n
             """
     )
-    @PostMapping("/refresh-token")
+    @GetMapping("/refresh-token")
     public RefreshTokenResponse refreshAccessToken(
             @RequestHeader(USER_ID) Integer userId,
             @RequestBody RefreshTokenRequest request) {

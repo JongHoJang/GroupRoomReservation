@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            String token = resolveToken(request);
+            String token = jwtProvider.resolveToken(request);
 
             if (token != null) {
                 if (!jwtProvider.validateToken(token)) {
@@ -47,13 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (CustomException e) {
             setErrorResponse(response, e.getErrorCode());
         }
-    }
-
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer "))
-                ? bearerToken.substring(7)
-                : null;
     }
 
     private void setAuthentication(String token, HttpServletRequest request) {
