@@ -8,32 +8,39 @@ import com.manchung.grouproom.error.ErrorCode;
 import com.manchung.grouproom.function.request.RefreshTokenRequest;
 import com.manchung.grouproom.function.response.RefreshTokenResponse;
 import com.manchung.grouproom.repository.RefreshTokenRepository;
-import com.manchung.grouproom.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import javax.transaction.Transactional;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class GetAccessTokenFromRefreshTokenFunction implements Function<RefreshTokenRequest, RefreshTokenResponse> {
+
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Transactional
     @Override
     public RefreshTokenResponse apply(RefreshTokenRequest refreshTokenRequest) {
-        if (!jwtProvider.validateToken(refreshTokenRequest.getRefreshToken())) {
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        log.info("[AccessToken Reissue] Received refresh token: {}", refreshToken);
+
+        if (!jwtProvider.validateToken(refreshToken)) {
+            log.warn("[AccessToken Reissue] Refresh token is expired or invalid: {}", refreshToken);
             throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
-        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshToken())
-                .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
+        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> {
+                    log.warn("[AccessToken Reissue] Refresh token not found in DB: {}", refreshToken);
+                    return new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+                });
 
         User user = storedToken.getUser();
         String newAccessToken = jwtProvider.createAccessToken(user.getUserId());
+        log.info("[AccessToken Reissue] New access token issued for userId={}", user.getUserId());
 
-        return new RefreshTokenResponse(newAccessToken, refreshTokenRequest.getRefreshToken());
+        return new RefreshTokenResponse(newAccessToken, refreshToken);
     }
 }

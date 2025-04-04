@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +15,11 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
+
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -30,21 +33,27 @@ public class JwtProvider {
     public static final String BEARER_PREFIX = "Bearer ";
 
     public String createAccessToken(Integer userId) {
-        return JWT.create()
+        String token = JWT.create()
                 .withSubject("AccessToken")
                 .withClaim(CLAIM_USER_ID, userId)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
                 .sign(Algorithm.HMAC256(secretKey));
+
+        log.info("[JWT] Access token created for userId={}", userId);
+        return token;
     }
 
     public String createRefreshToken(Integer userId) {
-        return JWT.create()
+        String token = JWT.create()
                 .withSubject("RefreshToken")
                 .withClaim(CLAIM_USER_ID, userId)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenExpirationMs))
                 .sign(Algorithm.HMAC256(secretKey));
+
+        log.info("[JWT] Refresh token created for userId={}", userId);
+        return token;
     }
 
     public boolean validateToken(String token) {
@@ -52,8 +61,11 @@ public class JwtProvider {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secretKey)).build();
             DecodedJWT jwt = verifier.verify(token);
 
-            return jwt.getExpiresAt().after(new Date());
+            boolean isValid = jwt.getExpiresAt().after(new Date());
+            log.info("[JWT] Token validation result: {}", isValid);
+            return isValid;
         } catch (JWTVerificationException e) {
+            log.warn("[JWT] Invalid or expired token: {}", e.getMessage());
             return false;
         }
     }
@@ -62,13 +74,19 @@ public class JwtProvider {
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secretKey))
                 .build()
                 .verify(token);
-        return decodedJWT.getClaim(CLAIM_USER_ID).asLong();
+        Long userId = decodedJWT.getClaim(CLAIM_USER_ID).asLong();
+        log.info("[JWT] Extracted userId from token: {}", userId);
+        return userId;
     }
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        return (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX))
-                ? bearerToken.substring(7)
-                : null;
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            String token = bearerToken.substring(7);
+            log.info("[JWT] Bearer token resolved from header");
+            return token;
+        }
+        log.info("[JWT] No valid bearer token found in header");
+        return null;
     }
 }

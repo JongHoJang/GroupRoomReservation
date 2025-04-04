@@ -11,6 +11,7 @@ import com.manchung.grouproom.function.response.dto.UserUsageStatus;
 import com.manchung.grouproom.repository.ReservationRepository;
 import com.manchung.grouproom.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -19,15 +20,16 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class UserUsageStatusFunction implements Function<Integer, UserUsageStatusResponse> {
+
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
 
     @Override
     public UserUsageStatusResponse apply(Integer userId) {
-        // ✅ 현재 시간 기준으로 마감 및 발표 시간 설정
         LocalDate today = LocalDate.now();
         LocalDate monday = today.with(DayOfWeek.MONDAY);
         LocalDate sunday = today.with(DayOfWeek.SUNDAY);
@@ -36,20 +38,35 @@ public class UserUsageStatusFunction implements Function<Integer, UserUsageStatu
         LocalDateTime announcementTime = monday.atTime(21, 5);
         LocalDateTime now = LocalDateTime.now();
 
-        // ✅ 유저 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        log.info("[User Usage Status] Checking usage status for userId={} at {}", userId, now);
 
-        String userName = user.getName();
-        // ✅ 금주 일요일 예약 여부 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn("[User Usage Status] User not found: userId={}", userId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND);
+                });
+
+        log.info("[User Usage Status] User found: name={}", user.getName());
+
         Optional<Reservation> reservationOpt = reservationRepository.findByUserAndUseDate(user, sunday);
+        reservationOpt.ifPresentOrElse(
+                r -> log.info("[User Usage Status] Reservation found: room={}, state={}", r.getRoom().getName(), r.getState()),
+                () -> log.info("[User Usage Status] No reservation found for this week")
+        );
+
+        UserUsageStatus status = determineUserUsageStatus(now, applicationDeadline, announcementTime, reservationOpt);
+        log.info("[User Usage Status] Determined status for userId={}: {}", userId, status);
+
         String roomName = reservationOpt.map(res -> res.getRoom().getName()).orElse(null);
 
-        // ✅ 현재 상태 판단
-        UserUsageStatus status = determineUserUsageStatus(now, applicationDeadline, announcementTime, reservationOpt);
-
-        return new UserUsageStatusResponse(userName, applicationDeadline, announcementTime, sunday, status, roomName);
-
+        return new UserUsageStatusResponse(
+                user.getName(),
+                applicationDeadline,
+                announcementTime,
+                sunday,
+                status,
+                roomName
+        );
     }
 
     private UserUsageStatus determineUserUsageStatus(LocalDateTime now,

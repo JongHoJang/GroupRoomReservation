@@ -6,6 +6,7 @@ import com.manchung.grouproom.function.response.RoomWinnerResponse;
 import com.manchung.grouproom.repository.ReservationRepository;
 import com.manchung.grouproom.repository.RoomRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -16,28 +17,29 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class RoomWinnerFunction implements Function<Integer, List<RoomWinnerResponse>> {
+
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
-
 
     @Override
     public List<RoomWinnerResponse> apply(Integer userId) {
         LocalDate sunday = LocalDate.now().with(DayOfWeek.SUNDAY);
+        log.info("[Room Winner] Fetching winners for useDate={}", sunday);
 
-        // 당첨된 예약 전체 조회
         List<Reservation> reservations = reservationRepository.findByUseDateAndState(sunday, ReservationState.SUCCESS);
+        log.info("[Room Winner] Total winning reservations found: {}", reservations.size());
 
-        // roomId -> List<Reservation> 맵핑
         Map<Integer, List<Reservation>> reservationMap = reservations.stream()
                 .collect(Collectors.groupingBy(r -> r.getRoom().getRoomId()));
 
-        // 전체 Room 기준으로 매핑
-        return roomRepository.findAll().stream()
+        List<RoomWinnerResponse> result = roomRepository.findAll().stream()
                 .map(room -> {
                     List<Reservation> winnerReservations = reservationMap.getOrDefault(room.getRoomId(), Collections.emptyList());
+                    log.info("[Room Winner] room='{}', winners={}", room.getName(), winnerReservations.size());
 
                     List<RoomWinnerResponse.WinnerInfo> winnerInfos = winnerReservations.stream()
                             .map(r -> RoomWinnerResponse.WinnerInfo.builder()
@@ -52,5 +54,8 @@ public class RoomWinnerFunction implements Function<Integer, List<RoomWinnerResp
                             .build();
                 })
                 .collect(Collectors.toList());
+
+        log.info("[Room Winner] Room winner mapping completed. Total rooms={}", result.size());
+        return result;
     }
 }

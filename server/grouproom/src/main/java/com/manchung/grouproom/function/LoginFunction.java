@@ -10,7 +10,7 @@ import com.manchung.grouproom.function.response.LoginResponse;
 import com.manchung.grouproom.repository.RefreshTokenRepository;
 import com.manchung.grouproom.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class LoginFunction implements Function<LoginRequest, LoginResponse> {
@@ -33,20 +34,23 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
     @Transactional
     @Override
     public LoginResponse apply(LoginRequest request) {
-        // 1️⃣ 사용자 조회
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_EMAIL));
+        log.info("[Login] Login attempt with email={}", request.getEmail());
 
-        // 2️⃣ 비밀번호 검증
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> {
+                    log.warn("[Login] No user found with email={}", request.getEmail());
+                    return new CustomException(ErrorCode.INVALID_EMAIL);
+                });
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("[Login] Password mismatch for userId={}", user.getUserId());
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        // 3️⃣ AccessToken / RefreshToken 발급
         String accessToken = jwtProvider.createAccessToken(user.getUserId());
         String refreshToken = jwtProvider.createRefreshToken(user.getUserId());
+        log.info("[Login] Tokens issued for userId={}", user.getUserId());
 
-        // 4️⃣ RefreshToken 저장 or 업데이트
         Optional<RefreshToken> existing = refreshTokenRepository.findByUser(user);
         if (existing.isPresent()) {
             RefreshToken existingToken = existing.get();
@@ -54,6 +58,7 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
             existingToken.setCreatedAt(LocalDateTime.now());
             existingToken.setExpiresAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTE));
             refreshTokenRepository.save(existingToken);
+            log.info("[Login] Existing refresh token updated for userId={}", user.getUserId());
         } else {
             RefreshToken tokenEntity = RefreshToken.builder()
                     .user(user)
@@ -61,11 +66,11 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
                     .createdAt(LocalDateTime.now())
                     .expiresAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTE))
                     .build();
-
             refreshTokenRepository.save(tokenEntity);
+            log.info("[Login] New refresh token saved for userId={}", user.getUserId());
         }
 
-        // 5️⃣ 응답
+        log.info("[Login] Login successful for userId={}", user.getUserId());
         return new LoginResponse(user.getUserId(), accessToken, refreshToken);
     }
 }

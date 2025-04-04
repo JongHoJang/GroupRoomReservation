@@ -2,13 +2,11 @@ package com.manchung.grouproom.function;
 
 import com.manchung.grouproom.error.CustomException;
 import com.manchung.grouproom.error.ErrorCode;
-import com.manchung.grouproom.function.request.CheckReservationApplicableRequest;
-import com.manchung.grouproom.function.request.UserUsageStatusRequest;
 import com.manchung.grouproom.function.response.CheckReservationApplicableResponse;
 import com.manchung.grouproom.function.response.UserUsageStatusResponse;
 import com.manchung.grouproom.function.response.dto.UserUsageStatus;
-import com.manchung.grouproom.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
@@ -17,39 +15,43 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class CheckReservationApplicableFunction implements Function<Integer, CheckReservationApplicableResponse> {
+
     private final UserUsageStatusFunction userUsageStatusFunction;
 
     @Override
     public CheckReservationApplicableResponse apply(Integer userId) {
-        // ✅ 현재 시간 가져오기
         LocalDateTime now = LocalDateTime.now();
+        log.info("[Reservation Check] userId={}, now={}", userId, now);
 
-        // ✅ 현재 요일이 월요일인지 확인
         if (now.getDayOfWeek() != DayOfWeek.MONDAY) {
+            log.warn("[Reservation Denied] Today is not Monday. Current day: {}", now.getDayOfWeek());
             throw new CustomException(ErrorCode.RESERVATION_ONLY_ALLOWED_MONDAY);
         }
 
-        // ✅ 신청 가능 시간 (월요일 00:00 ~ 21:00)
         LocalDate today = now.toLocalDate();
         LocalDateTime applicationStart = LocalDateTime.of(today, LocalTime.of(0, 0));
         LocalDateTime applicationDeadline = LocalDateTime.of(today, LocalTime.of(21, 0));
 
-        // ✅ 현재 시간이 신청 가능 시간 내에 있는지 확인
         if (now.isBefore(applicationStart) || now.isAfter(applicationDeadline)) {
+            log.warn("[Reservation Denied] Current time is outside application period. Start: {}, Deadline: {}, Now: {}",
+                    applicationStart, applicationDeadline, now);
             throw new CustomException(ErrorCode.RESERVATION_NOT_ALLOWED_TIME);
         }
 
-        // ✅ 유저의 현재 신청 상태 가져오기
+        log.info("[Reservation Check] Fetching user application status: userId={}", userId);
         UserUsageStatusResponse statusResponse = userUsageStatusFunction.apply(userId);
+        log.info("[Reservation Check] Retrieved status: {}", statusResponse.getStatus());
 
-        // ✅ 미신청 상태인지 확인
         if (statusResponse.getStatus() != UserUsageStatus.BEFORE_APPLICATION) {
+            log.warn("[Reservation Denied] Invalid user status for application. Status: {}", statusResponse.getStatus());
             throw new CustomException(ErrorCode.RESERVATION_NOT_ALLOWED_STATUS);
         }
 
-        return new CheckReservationApplicableResponse("신청 가능합니다"); // 200 OK 응답 (Spring Cloud Function에서는 Void 사용 가능)
+        log.info("[Reservation Allowed] userId={} is eligible to apply.", userId);
+        return new CheckReservationApplicableResponse("Application is allowed");
     }
 }
