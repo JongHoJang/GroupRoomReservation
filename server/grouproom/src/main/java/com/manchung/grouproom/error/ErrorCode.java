@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     // ✅ 인증 관련 오류
     ACCESS_TOKEN_EXPIRED(10001, HttpStatus.UNAUTHORIZED, "Access Token이 만료되었습니다."),
-    INVALID_REFRESH_TOKEN(10002, HttpStatus.UNAUTHORIZED, "잘못된 Access Token입니다."),
+    INVALID_REFRESH_TOKEN(10002, HttpStatus.UNAUTHORIZED, "잘못된 Refresh Token입니다."),
     REFRESH_TOKEN_NOT_FOUND(10003, HttpStatus.UNAUTHORIZED, "Refresh Token이 존재하지 않습니다."),
     REFRESH_TOKEN_EXPIRED(10004, HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
 

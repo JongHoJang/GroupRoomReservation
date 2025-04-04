@@ -25,16 +25,11 @@ public class GetAccessTokenFromRefreshTokenFunction implements Function<RefreshT
     @Override
     public RefreshTokenResponse apply(RefreshTokenRequest refreshTokenRequest) {
         if (!jwtProvider.validateToken(refreshTokenRequest.getRefreshToken())) {
-            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
         RefreshToken storedToken = refreshTokenRepository.findByToken(refreshTokenRequest.getRefreshToken())
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
-
-        if (storedToken.isExpired()) {
-            refreshTokenRepository.delete(storedToken);
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
-        }
 
         User user = storedToken.getUser();
         String newAccessToken = jwtProvider.createAccessToken(user.getUserId());
