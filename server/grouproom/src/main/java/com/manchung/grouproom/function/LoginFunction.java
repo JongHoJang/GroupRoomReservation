@@ -10,6 +10,7 @@ import com.manchung.grouproom.function.response.LoginResponse;
 import com.manchung.grouproom.repository.RefreshTokenRepository;
 import com.manchung.grouproom.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,8 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+
+    private static final long TOKEN_EXPIRE_MINUTE = 5;
 
     @Transactional
     @Override
@@ -49,14 +52,14 @@ public class LoginFunction implements Function<LoginRequest, LoginResponse> {
             RefreshToken existingToken = existing.get();
             existingToken.setToken(refreshToken);
             existingToken.setCreatedAt(LocalDateTime.now());
-            existingToken.setExpiresAt(LocalDateTime.now().plusDays(14));
+            existingToken.setExpiresAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTE));
             refreshTokenRepository.save(existingToken);
         } else {
             RefreshToken tokenEntity = RefreshToken.builder()
                     .user(user)
                     .token(refreshToken)
                     .createdAt(LocalDateTime.now())
-                    .expiresAt(LocalDateTime.now().plusDays(14))
+                    .expiresAt(LocalDateTime.now().plusMinutes(TOKEN_EXPIRE_MINUTE))
                     .build();
 
             refreshTokenRepository.save(tokenEntity);
