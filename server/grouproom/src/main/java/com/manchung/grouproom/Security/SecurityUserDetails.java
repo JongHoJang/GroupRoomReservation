@@ -22,6 +22,8 @@ public class SecurityUserDetails implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+    public Integer getUserId() { return user.getUserId(); }
+
     @Override
     public String getPassword() {
         return user.getPassword(); // DB에 저장된 암호화된 비밀번호

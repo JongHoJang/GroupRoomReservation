@@ -4,6 +4,7 @@ import com.manchung.grouproom.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -27,6 +28,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Order(1)
+    @Bean
+    public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .antMatcher("/actuator/**")
+                .authorizeRequests()
+                .anyRequest()
+                .access("hasIpAddress('127.0.0.1') or hasIpAddress('49.175.93.136')")
+                .and()
+                .build();
+    }
+
+    @Order(2)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -36,8 +50,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/refresh-token").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/login", "/api/signUp").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/login", "/api/signUp", "/api/refresh-token").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/selectReservation").permitAll()
                 .anyRequest().authenticated()
                 .and()

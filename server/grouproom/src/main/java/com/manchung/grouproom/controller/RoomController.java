@@ -1,5 +1,6 @@
 package com.manchung.grouproom.controller;
 
+import com.manchung.grouproom.Security.SecurityUserDetails;
 import com.manchung.grouproom.function.RoomReservationFunction;
 import com.manchung.grouproom.function.RoomWinnerFunction;
 import com.manchung.grouproom.function.RoomWithReservationInfoFunction;
@@ -8,7 +9,9 @@ import com.manchung.grouproom.function.response.RoomReservationResponse;
 import com.manchung.grouproom.function.response.RoomWinnerResponse;
 import com.manchung.grouproom.function.response.RoomWithReservationInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +41,10 @@ public class RoomController {
     )
     @PostMapping("/room/reserve")
     public RoomReservationResponse reserve(
-            @RequestHeader(USER_ID) Integer userId,
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal SecurityUserDetails userDetails,
             @RequestParam Integer roomId) {
-        return reserveRoomFunction.apply(new RoomReservationRequest(userId, roomId));
+        return reserveRoomFunction.apply(new RoomReservationRequest(userDetails.getUserId(), roomId));
     }
 
     @Operation(
@@ -54,8 +58,9 @@ public class RoomController {
     )
     @GetMapping("/room/reservation/info")
     public List<RoomWithReservationInfoResponse> getRoomInfo(
-            @RequestHeader(USER_ID) Integer userId) {
-        return getRoomWithReservationInfoFunction.apply(userId);
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal SecurityUserDetails userDetails) {
+        return getRoomWithReservationInfoFunction.apply(userDetails.getUserId());
     }
 
     @Operation(
@@ -67,8 +72,9 @@ public class RoomController {
     )
     @GetMapping("/room/users")
     public List<RoomWinnerResponse> allRoomUsers(
-            @RequestHeader(USER_ID) Integer userId
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal SecurityUserDetails userDetails
     ) {
-        return roomWinnerFunction.apply(userId);
+        return roomWinnerFunction.apply(userDetails.getUserId());
     }
 }

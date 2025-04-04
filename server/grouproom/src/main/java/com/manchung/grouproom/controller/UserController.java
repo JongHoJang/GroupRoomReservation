@@ -1,10 +1,13 @@
 package com.manchung.grouproom.controller;
 
+import com.manchung.grouproom.Security.SecurityUserDetails;
 import com.manchung.grouproom.function.*;
 import com.manchung.grouproom.function.request.*;
 import com.manchung.grouproom.function.response.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static com.manchung.grouproom.constant.HeaderConstant.USER_ID;
@@ -24,6 +27,7 @@ public class UserController {
             description =
             """
             리프레시 토큰을 이용하여 액세스 토큰을 조회합니다\n
+            Body에 실어 보내기 위해 POST 요청입니다
             에러코드\n
             code : 10001 -> Access Token이 만료되었습니다.\n
             code : 10002 -> 잘못된 Access Token입니다.\n
@@ -31,9 +35,8 @@ public class UserController {
             code : 10004 -> Refresh Token이 만료되었습니다.\n
             """
     )
-    @GetMapping("/refresh-token")
+    @PostMapping("/refresh-token")
     public RefreshTokenResponse refreshAccessToken(
-            @RequestHeader(USER_ID) Integer userId,
             @RequestBody RefreshTokenRequest request) {
         return getAccessTokenFromRefreshTokenFunction.apply(request);
     }
@@ -80,8 +83,9 @@ public class UserController {
     )
     @GetMapping("/user/reservation/applicable")
     public CheckReservationApplicableResponse checkReservation(
-            @RequestHeader(USER_ID) Integer userId) {
-        return checkReservationAppliableFunction.apply(userId);
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal SecurityUserDetails userDetails) {
+        return checkReservationAppliableFunction.apply(userDetails.getUserId());
     }
 
     @Operation(
@@ -103,8 +107,9 @@ public class UserController {
     )
     @GetMapping("/user/usage")
     public UserUsageStatusResponse usageStatus(
-            @RequestHeader(USER_ID) Integer userId
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal SecurityUserDetails userDetails
     ) {
-        return userUsageStatusFunction.apply(userId);
+        return userUsageStatusFunction.apply(userDetails.getUserId());
     }
 }

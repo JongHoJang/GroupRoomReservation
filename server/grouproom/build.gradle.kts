@@ -66,6 +66,8 @@ dependencies {
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+
 	// ✅ Spring Batch 기본 의존성
 	implementation("org.springframework.boot:spring-boot-starter-batch")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
