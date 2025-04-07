@@ -2,6 +2,7 @@ package com.manchung.grouproom.function;
 
 import com.manchung.grouproom.entity.User;
 import com.manchung.grouproom.entity.enums.Community;
+import com.manchung.grouproom.entity.enums.UserRole;
 import com.manchung.grouproom.error.CustomException;
 import com.manchung.grouproom.error.ErrorCode;
 import com.manchung.grouproom.function.request.SignUpRequest;
@@ -39,6 +40,11 @@ public class SignUpFunction implements Function<SignUpRequest, SignUpResponse> {
             log.warn("[SignUp] User info mismatch - no matching user found for sign-up");
             return new CustomException(ErrorCode.SIGNUP_WRONG_INFORMATION);
         });
+
+        if (user.getUserRole().equals(UserRole.USER_CANNOT_SIGNUP)) {
+            log.warn("[SignUp] Cannot Signup - user role is USER_CANNOT_SIGNUP");
+            throw new CustomException(ErrorCode.CANNOT_SIGNUP);
+        }
 
         String encryptedPassword = passwordEncoder.encode(request.getPassword());
         user.setEmail(request.getEmail());

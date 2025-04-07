@@ -18,6 +18,7 @@ public enum ErrorCode {
     INVALID_EMAIL(20002, HttpStatus.CONFLICT, "해당 이메일의 사용자가 없습니다."),
     PASSWORD_MISMATCH(20003, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
     SIGNUP_WRONG_INFORMATION(20004, HttpStatus.UNAUTHORIZED, "입력하신 정보가 올바르지 않습니다."),
+    CANNOT_SIGNUP(20005, HttpStatus.UNAUTHORIZED, "가입이 불가능합니다"),
 
     // ✅ 예약 관련 오류
     ROOM_NOT_FOUND(30001, HttpStatus.NOT_FOUND, "해당 소그룹실을 찾을 수 없습니다."),
