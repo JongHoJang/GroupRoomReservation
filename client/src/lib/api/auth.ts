@@ -1,36 +1,27 @@
 //로그인, 로그아웃, 회원가입
 import { LoginForm } from '@/types/auth'
 import api from '@/lib/api/axios'
-import { AxiosError } from 'axios'
-import { authStore } from '@/store/useAuthStore'
+import axios, { AxiosError } from 'axios'
 import { setCookie } from 'cookies-next'
 
 // 로그인 axios
 export const login = async ({ email, password }: LoginForm) => {
   try {
-    const res = await api.post(
-      '/api/login',
-      { email, password },
-      {
-        withCredentials: true, // 쿠키 포함 필수
-      }
-    )
-    const { accessToken } = res.data
+    const res = await api.post('/api/login', { email, password })
 
-    // zustand 메모리에 저장
-    authStore.getState().setAccessToken(accessToken)
+    const { accessToken, refreshToken } = res.data
 
-    // 쿠키 저장 (ssr 대응 일반 쿠키)
+    // ✅ accessToken을 쿠키에 저장
     setCookie('accessToken', accessToken, {
+      // maxAge: 60,
       path: '/',
-      maxAge: 60 * 60, // 1시간
-      sameSite: 'lax',
     })
+
+    localStorage.setItem('refreshToken', refreshToken) // 이건 필요하다면 유지
 
     return { success: true }
   } catch (err: unknown) {
     let errorMessage = '로그인 실패'
-    console.error('로그인 실패:', err)
 
     if (err && typeof err === 'object' && 'response' in err) {
       const axiosErr = err as AxiosError<{ message: string }>
@@ -58,15 +49,15 @@ export const signUp = async (formData: {
 }
 
 // refreshToken API
-export const refreshAccessToken = async (): Promise<string> => {
-  try {
-    const res = await api.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/refresh-token`,
-      {}
-    )
-    return res.data.accessToken
-  } catch (err) {
-    console.error('refreshToken 재발급 실패:', err)
-    throw err // 상위에서 catch 가능하도록 rethrow
-  }
+const rawAxios = axios.create()
+
+export const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem('refreshToken')
+  const res = await rawAxios.post(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/refresh-token`,
+    { refreshToken }
+  )
+  const { accessToken } = res.data
+  localStorage.setItem('accessToken', accessToken)
+  return accessToken
 }

@@ -16,19 +16,8 @@ const RoomListContainer: React.FC<RoomListContainerProps> = ({
   selectedRoom,
   clickable = false,
 }) => {
-  // 커스텀 sort 로직(지하1층이 맨 앞으로 오게 변경)
-  const sortFloor = (a: string, b: string) => {
-    const parse = (value: string) => {
-      if (value.startsWith('B')) return -Number(value.replace(/[^0-9]/g, '')) // B1층 → -1
-      return Number(value.replace(/[^0-9]/g, '')) // 1층 → 1, 3층 → 3
-    }
+  const floorList = Array.from(new Set(rooms?.map(room => room.floor))).sort()
 
-    return parse(a) - parse(b)
-  }
-
-  const floorList = Array.from(new Set(rooms?.map(room => room.floor))).sort(
-    sortFloor
-  )
   return (
     <div className="space-y-8">
       {floorList.map(floor => {
