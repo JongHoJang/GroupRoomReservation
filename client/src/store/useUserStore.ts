@@ -14,5 +14,5 @@ export const useUserStore = create<UserState>(set => ({
 }))
 
 // useUserStore.subscribe(state => {
-//   console.log('📦 Zustand 상태 변경됨:', state.userInfo)
+//   console.log('Zustand 상태 변경됨:', state.userInfo)
 // })

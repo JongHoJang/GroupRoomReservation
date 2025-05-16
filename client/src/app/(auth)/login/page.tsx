@@ -1,8 +1,10 @@
+'use client'
+
 import LoginForm from '@/app/(auth)/login/_component/LoginForm'
 import SignUpButton from '@/app/(auth)/login/_component/SignUpButton'
 import LoginPageContext from '@/app/(auth)/login/_component/LoginPageContext'
 
-const LoginPage = async () => {
+const LoginPage = () => {
   return (
     <>
       <div className="w-full py-10">

@@ -5,6 +5,7 @@ import Footer from '@/app/_component/Footer'
 import { pretendard } from '@/app/_fonts/pretendard'
 import Header from '@/app/_component/Header'
 import { ReactQueryProvider } from '@/app/providers/ReactProvider'
+import { AuthInitializer } from '@/app/_component/AuthInitializer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -71,9 +72,11 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-pretendard min-h-screen flex flex-col`}
       >
         <ReactQueryProvider>
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
+          <AuthInitializer>
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </AuthInitializer>
         </ReactQueryProvider>
       </body>
     </html>

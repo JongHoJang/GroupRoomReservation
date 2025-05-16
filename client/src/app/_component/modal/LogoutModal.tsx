@@ -1,6 +1,7 @@
 import React from 'react'
 import { deleteCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
+import { authStore } from '@/store/useAuthStore'
 
 interface Props {
   modalTitle: string
@@ -16,9 +17,8 @@ export default function LogoutModal({
   const router = useRouter()
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
-    deleteCookie('accessToken', { path: '/' })
+    authStore.getState().clearAccessToken?.()
+    deleteCookie('accessToken')
 
     onClose() // 모달 먼저 닫고
     router.push('/login') // 페이지 이동

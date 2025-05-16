@@ -1,11 +1,19 @@
 // 방 정보 api
 
 import api from '@/lib/api/axios'
+import { authStore } from '@/store/useAuthStore'
+
+const accessToken = authStore.getState().accessToken
 
 export const fetchRoomInfoClient = async () => {
   try {
     const res = await api.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/room/reservation/info`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/room/reservation/info`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     )
 
     return res.data
@@ -16,7 +24,11 @@ export const fetchRoomInfoClient = async () => {
 
 // 이번주에 당첨된 사람들 리스트 api
 export const usingRoomUserList = async () => {
-  const res = await api.get('/api/room/users')
+  const res = await api.get('/api/room/users', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
   return res.data
 }
 
@@ -25,6 +37,9 @@ export const reservationRoom = async (roomId: number) => {
   const res = await api.post('/api/room/reserve', null, {
     params: {
       roomId,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
     },
   })
   return res.data

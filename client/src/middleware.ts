@@ -33,7 +33,20 @@ export const config = {
     '/apply/:path*',
     '/application-overview/:path*',
     '/check-winner/:path*',
-    '/login/:path*',
-    '/signup/:path*',
+    '/login',
+    '/signup',
   ],
 }
+//
+// import { NextResponse } from 'next/server'
+// import type { NextRequest } from 'next/server'
+//
+// export function middleware(request: NextRequest) {
+//   void request // 사용하지 않지만 의도적으로 무시
+//   // accessToken 여부와 상관없이 아무 조건 없이 통과시킴
+//   return NextResponse.next()
+// }
+//
+// export const config = {
+//   matcher: '/:path*', // 모든 경로에 대해 미들웨어 실행
+// }
